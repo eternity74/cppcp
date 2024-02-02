@@ -35,6 +35,6 @@ autocmd BufRead c:/data/codeforces/*.cpp call RegisterCmd()
 execute "autocmd BufNewFile c:/data/baekjoon/*.cpp 0r " . s:plugindir . "/template.cpp | $d | call cppcp#writedesc() | call RegisterCmd() | 15"
 autocmd BufRead c:/data/baekjoon/*.cpp call RegisterCmd()
 
-let g:clang_format_path = s:plugindir . "\\clang-format.exe"
+let g:clang_format_path = s:plugindir . "/clang-format.exe"
 execute "map <C-I> :pyf " . s:plugindir. "/clang-format.py<cr>"
 execute "imap <C-I> <c-o>:pyf " . s:plugindir . "/clang-format.py<cr>"

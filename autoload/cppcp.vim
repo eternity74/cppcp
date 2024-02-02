@@ -31,14 +31,15 @@ headers = {
 
 def copy_buffer_to_clipboard():
 #Copy the contents of the unnamed register to the clipboard
-  register_contents = subprocess.check_output("gcc -fpreprocessed -dD -E " + vim.eval('expand("%")') + ' | sed -e "/^#\ /d"' + ' | ' + vim.eval('g:clang_format_path'),  shell=True)
-  #register_contents = subprocess.check_output("gcc -fpreprocessed -dD -E " + vim.eval('expand("%")'),  shell=True)
+  source_file = os.path.abspath(vim.eval('expand("%")'))
+  clang_format_path = os.path.abspath(vim.eval('g:clang_format_path'))
+  register_contents = subprocess.check_output(f'gcc -fpreprocessed -dD -E {source_file} | sed -e "/^#\ /d" | {clang_format_path}',  shell=True)
   subprocess.run('clip', input=register_contents)
   print_green_text("Buffer copied to clipboard!")
 
 def get_problem_info():
-  fullpath = vim.eval('expand("%:p")')
-  executable = vim.eval('expand("%:t:r")')
+  fullpath = os.path.abspath(vim.eval('expand("%:p")'))
+  executable = os.path.abspath(vim.eval('expand("%:t:r")'))
   contest = None
   problem = None
   sample = None
@@ -131,6 +132,7 @@ def download():
     return download_cf()
 
 def run_test():
+  vim.command("mess clear")
   info = get_problem_info()
   if len(TEST_DATA_DIR):
     os.makedirs(TEST_DATA_DIR, exist_ok=True)
