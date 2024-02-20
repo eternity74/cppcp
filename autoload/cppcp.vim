@@ -158,10 +158,12 @@ def run_test():
     sample_input = open(TEST_DATA_DIR+f"{info.sample}-input-{test}.txt","rb").read()
 
     p = Popen([f"{info.exec}"], stdout=PIPE, stdin=PIPE, stderr=PIPE)
+    tle = False
     try:
       started = datetime.datetime.now()
-      out, err = p.communicate(input=sample_input, timeout=3)
+      out, err = p.communicate(input=sample_input, timeout=time_limit)
     except TimeoutExpired:
+      tle = True
       p.kill();
       print_red_text(" Time Limit Exceed!");
       out, err = p.communicate()
@@ -189,7 +191,10 @@ def run_test():
   if test_passed:
     print_green_text("[] Test Passed!")
     copy_buffer_to_clipboard()
-  print_green_text(f"Time: %d ms" %(time_mx.microseconds/1000))
+  if tle:
+    print_red_text(f"Time: %d ms" %(time_mx/datetime.timedelta(milliseconds=1)))
+  else:
+    print_green_text(f"Time: %d ms" %(time_mx/datetime.timedelta(milliseconds=1)))
 
 EOF
 " @@end_python##
@@ -221,6 +226,7 @@ function! cppcp#run_test()
     endif
   endif
 
+  echom "[] Run test..."
   :py3 run_test()
 endfunction
 
