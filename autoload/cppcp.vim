@@ -33,7 +33,7 @@ def copy_buffer_to_clipboard():
 #Copy the contents of the unnamed register to the clipboard
   source_file = os.path.abspath(vim.eval('expand("%")'))
   clang_format_path = os.path.abspath(vim.eval('g:clang_format_path'))
-  register_contents = subprocess.check_output(f'gcc -fpreprocessed -dD -E {source_file} | sed -e "/^#\ /d" | {clang_format_path}',  shell=True)
+  register_contents = subprocess.check_output(f'gcc -fpreprocessed -dD -E {source_file} | sed -e "/^#\\ /d" | {clang_format_path}',  shell=True)
   subprocess.run('clip', input=register_contents)
   print_green_text("Buffer copied to clipboard!")
 
@@ -120,7 +120,7 @@ def download_bj():
     print_red_text("Failed to get time limit info.")
 
   for name in ["input", "output"]:
-    for i, s in enumerate(soup.find_all('pre', id=re.compile(f'sample-{name}-\d+'))):
+    for i, s in enumerate(soup.find_all('pre', id=re.compile(f'sample-{name}-\\d+'))):
       with open(TEST_DATA_DIR+f"{info.sample}-{name}-{i}.txt","w") as f:
         f.write(s.text.strip().replace('\r\n','\n'))
   print("[] Download done!")
@@ -151,7 +151,7 @@ def run_test():
   time_mx = datetime.timedelta(0);
   for s in input_files:
     time_start = datetime.datetime.now()
-    pat = f"{info.sample}-input-(?P<test>\d+)\.txt"
+    pat = f"{info.sample}-input-(?P<test>\\d+)\\.txt"
     result = re.search(pat, s)
     test = result["test"]
 
