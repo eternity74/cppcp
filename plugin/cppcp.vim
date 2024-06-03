@@ -23,10 +23,14 @@ function RegisterCmd()
   let &l:makeprg=join(command, " ")
   set errorformat=%A%f:%l:%c:\ %t%*[^:]:\ %m,%-G%.%#
   nnoremap <F8> :w <bar> !gcc -fpreprocessed -dD -E % \| sed "/^\# /d" \| clip<CR>
-  nnoremap <F4> :call cppcp#make<CR>
-  inoremap <F4> <ESC>:call cppcp#make<CR>
+  "nnoremap <F4> :call cppcp#make<CR>
+  "inoremap <F4> <ESC>:call cppcp#make<CR>
   nnoremap <F5> :call cppcp#run_test()<CR>
   inoremap <F5> <ESC>:call cppcp#run_test()<CR>
+
+  let g:clang_format_path = s:plugindir . "/clang-format.exe"
+  execute "map <F4> :pyf " . s:plugindir. "/clang-format.py<cr>"
+  execute "imap <F4> <c-o>:pyf " . s:plugindir . "/clang-format.py<cr>"
 endfunction
 
 autocmd BufNewFile c:/data/codeforces/*.cpp 0r c:/data/codeforces/template.cpp | $d | call RegisterCmd()
@@ -34,7 +38,3 @@ autocmd BufRead c:/data/codeforces/*.cpp call RegisterCmd()
 
 execute "autocmd BufNewFile c:/data/baekjoon/*.cpp 0r " . s:plugindir . "/template.cpp | $d | call cppcp#writedesc() | call RegisterCmd() | 15"
 autocmd BufRead c:/data/baekjoon/*.cpp call RegisterCmd()
-
-let g:clang_format_path = s:plugindir . "/clang-format.exe"
-execute "map <C-I> :pyf " . s:plugindir. "/clang-format.py<cr>"
-execute "imap <C-I> <c-o>:pyf " . s:plugindir . "/clang-format.py<cr>"
