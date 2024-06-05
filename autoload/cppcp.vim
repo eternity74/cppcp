@@ -12,7 +12,7 @@ from subprocess import Popen, PIPE, STDOUT, TimeoutExpired
 from bs4 import BeautifulSoup
 
 def get_test_data_dir():
-  return os.path.normpath(os.path.join(vim.eval('expand("%:p:h")'),"_"))
+  return os.path.normpath(os.path.join(vim.eval('expand("%:p:h")'),".td"))
 
 def print_red_text(message):
   vim.command('echohl ErrorMsg')
@@ -95,7 +95,7 @@ def download_cf():
   #print(response.text)
   soup = BeautifulSoup(response.text, "html.parser")
   for name in ["input", "output"]:
-    with open(get_test_data_dir()+f"{info.sample}-{name}-0.txt","w") as f:
+    with open(f"{get_test_data_dir()}/{info.sample}-{name}-0.txt","w") as f:
       for t in soup.select(f'div.{name} > pre'):
         if t.children:
           for child in t.children:
@@ -108,21 +108,21 @@ def download_cf():
 # writing problem-id.input0 problem-id.output0
 def download_bj():
   info = get_problem_info()
-  if len(glob.glob(get_test_data_dir()+f'{info.sample}-input-*.txt')) > 0:
+  if len(glob.glob(f'{get_test_data_dir()}/{info.sample}-input-*.txt')) > 0:
     return
   print("[] Downloading..", info.url)
   response = requests.get(info.url, headers=headers)
   soup = BeautifulSoup(response.text, "html.parser")
   try:
     tl = soup.select("table#problem-info tbody tr td")[0].text.split()[0]
-    with open(get_test_data_dir()+f"{info.sample}-time-limit.txt","w") as f:
+    with open(f"{get_test_data_dir()}/{info.sample}-time-limit.txt","w") as f:
       f.write(tl);
   except Exception:
     print_red_text("Failed to get time limit info.")
 
   for name in ["input", "output"]:
     for i, s in enumerate(soup.find_all('pre', id=re.compile(f'sample-{name}-\\d+'))):
-      with open(get_test_data_dir()+f"{info.sample}-{name}-{i}.txt","w") as f:
+      with open(f"{get_test_data_dir()}/{info.sample}-{name}-{i}.txt","w") as f:
         f.write(s.text.strip().replace('\r\n','\n'))
   print("[] Download done!")
 
@@ -139,12 +139,12 @@ def run_test():
     os.makedirs(get_test_data_dir(), exist_ok=True)
 
   download()
-  input_files = glob.glob(get_test_data_dir()+f'{info.sample}-input-*.txt')
+  input_files = glob.glob(f'{get_test_data_dir()}/{info.sample}-input-*.txt')
   if len(input_files) == 0:
     print_red_text("Failed to download samples!")
     sys.exit(1)
   try:
-    time_limit = int(open(get_test_data_dir()+f'{info.sample}-time-limit.txt').read())
+    time_limit = int(open(f'{get_test_data_dir()}/{info.sample}-time-limit.txt').read())
   except Exception:
     time_limit = 3;
   print_green_text(f"Using time limit {time_limit}")
@@ -156,7 +156,7 @@ def run_test():
     result = re.search(pat, s)
     test = result["test"]
 
-    sample_input = open(get_test_data_dir()+f"{info.sample}-input-{test}.txt","rb").read()
+    sample_input = open(f"{get_test_data_dir()}/{info.sample}-input-{test}.txt","rb").read()
 
     p = Popen([f"{info.exec}"], stdout=PIPE, stdin=PIPE, stderr=PIPE)
     tle = False
@@ -172,7 +172,7 @@ def run_test():
 
     exec_time = datetime.datetime.now() - time_start
     time_mx = max(time_mx,exec_time)
-    sample_out = open(get_test_data_dir()+f"{info.sample}-output-{test}.txt","rb").read()
+    sample_out = open(f"{get_test_data_dir()}/{info.sample}-output-{test}.txt","rb").read()
     expected = sample_out.decode().strip().replace('\r\n','\n')
     actual = out.decode().strip().replace('\r\n','\n')
     errstr = err.decode().strip().replace('\r\n','\n')
