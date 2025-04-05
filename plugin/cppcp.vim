@@ -10,7 +10,7 @@ command! -nargs=0 RunTest call cppcp#run_test()
 command! -nargs=0 Make call cppcp#make()
 
 function RegisterCmd()
-  let cxx_flags = " -Wall -Wextra -pedantic -std=c++17 -g -O2 -Wshadow -Wformat=2 -Wfloat-equal -Wconversion -Wlogical-op -Wshift-overflow=2 -Wduplicated-cond -Wcast-qual -Wcast-align -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -fno-sanitize-recover -fstack-protector"
+  let cxx_flags = " -Wall -Wextra -pedantic -std=c++17 -g -O2 -Wshadow -Wformat=2 -Wfloat-equal -Wconversion -Wlogical-op -Wshift-overflow=2 -Wduplicated-cond -Wcast-qual -Wcast-align -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -fno-sanitize-recover -fstack-protector -Wl,--stack,536870912"
   let command = [
         \"g++",
         \"-Wno-unused-parameter",

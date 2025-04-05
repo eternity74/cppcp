@@ -48,7 +48,7 @@ def get_problem_info():
   site = None
   if 'baekjoon' in fullpath:
     try:
-      problem = int(vim.eval('expand("%:t:r")'))
+      problem = int(re.split("[\-_]",vim.eval('expand("%:t:r")'))[-1])
     except:
       problem = vim.eval('expand("%:p:h:t")')
     url = f"https://www.acmicpc.net/problem/{problem}"
@@ -173,8 +173,8 @@ def run_test():
     exec_time = datetime.datetime.now() - time_start
     time_mx = max(time_mx,exec_time)
     sample_out = open(f"{get_test_data_dir()}/{info.sample}-output-{test}.txt","rb").read()
-    expected = sample_out.decode().strip().replace('\r\n','\n')
-    actual = out.decode().strip().replace('\r\n','\n')
+    expected = '\n'.join(line.rstrip() for line in sample_out.decode().splitlines())
+    actual = '\n'.join(line.rstrip() for line in out.decode().splitlines())
     errstr = err.decode().strip().replace('\r\n','\n')
     result = expected == actual
     if result:
